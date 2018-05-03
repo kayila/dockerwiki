@@ -1,0 +1,26 @@
+version: '3.6'
+services:
+  wiki:
+    build: mediawiki
+    restart: always
+    ports:
+      - 5555:80
+    volumes:
+      - ./images:/var/www/mediawiki/images
+      - ./extensions:/var/www/mediawiki/extensions
+      - ./skins:/var/www/mediawiki/skins
+      - ./LocalSettings.php:/var/www/mediawiki/LocalSettings.php
+  db:
+    image: mariadb:10.3
+    restart: always
+    environment:
+      MYSQL_DATABASE: wikinotebook
+      MYSQL_USER: wikiuser
+      MYSQL_PASSWORD_FILE: /run/secrets/wikiuser_password
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+    secrets:
+      - wikiuser_password
+secrets:
+  wikiuser_password:
+    name: wikiuser_password_v1
+    file: wikiuser_password
